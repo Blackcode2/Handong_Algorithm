@@ -5,6 +5,54 @@
 #include <algorithm>
 using namespace std;
 
+struct HeapNode
+{
+    string name;
+    int score;
+    string className;
+};
+
+class Heap
+{
+private:
+    int maxCount;
+    int currentCount;
+
+public:
+    Heap(int maxCount)
+        : maxCount{maxCount} {}
+
+    void INSERT(HeapNode newNode, HeapNode *heap)
+    {
+        if (currentCount > maxCount)
+        {
+            cout << "Error: The heap reached its maximum size. Can not insert new data!\n";
+        }
+
+        this->currentCount++;
+        int index = this->currentCount;
+
+        while ((index != 1) && (newNode.score > heap[index / 2].score))
+        {
+            heap[index] = heap[index / 2];
+            index / 2;
+        }
+
+        heap[index] = newNode;
+    }
+
+    HeapNode MAXIMUM(HeapNode *heap)
+    {
+        return heap[0];
+    }
+
+    HeapNode EXTRACTMAX(HeapNode *heap)
+    {
+        HeapNode *pReturnNode;
+        HeapNode *pTempNode;
+    }
+};
+
 void showMenu();
 string preprocessInput(string input);
 string getUserMenuInput();
@@ -19,12 +67,45 @@ enum Menu
     w
 };
 Menu convertStringToMenu(string str);
+void getNewElement()
+{
+    HeapNode newNode;
+    int score;
+    cout << "Enter the name of the student: ";
+    cin >> newNode.name;
+
+    while (true)
+    {
+        cout << "Enter the score of the element: ";
+        cin >> score;
+        if (score < 0 || score > 100)
+        {
+            cout << "Number is out of the rannge 0 to 100\n";
+            continue;
+        }
+
+        /// TODO: 인풋으로 스트링값 들어왔을때 처리리
+        if (cin.fail())
+        {
+            cout << "Wrong Input! Please, put integer\n";
+            continue;
+        }
+
+        newNode.score = score;
+        break;
+    }
+    cout << "Enter the class name: ";
+}
+
+/// TODO: heap index 0 말고 1부터 시작이란다
 
 int main()
 {
     Menu menu;
     string selectedMenu;
     bool isLooping = true;
+
+    HeapNode priorityQue[30];
 
     while (isLooping)
     {
@@ -36,6 +117,7 @@ int main()
         {
         case i:
             cout << "i\n";
+            getNewElement();
             break;
         case d:
             cout << "d\n";
