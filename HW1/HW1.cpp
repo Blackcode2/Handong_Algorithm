@@ -23,8 +23,9 @@ int main()
 {
     Menu menu;
     string selectedMenu;
+    bool isLooping = true;
 
-    while (true)
+    while (isLooping)
     {
         showMenu();
         selectedMenu = getUserMenuInput();
@@ -33,12 +34,26 @@ int main()
         switch (menu)
         {
         case i:
+            cout << "i\n";
+            break;
         case d:
+            cout << "d\n";
+            break;
         case r:
+            cout << "r\n";
+            break;
         case n:
+            cout << "n\n";
+            break;
         case p:
+            cout << "p\n";
+            break;
         case q:
+            cout << "q\n";
+            isLooping = false;
+            break;
         case w:
+            cout << "wrong input\n";
             break;
         }
     }
@@ -79,7 +94,7 @@ string getUserMenuInput()
     return processedInput;
 }
 
-Menu covertStringToMenu(string str)
+Menu convertStringToMenu(string str)
 {
     if (str == "i")
     {
