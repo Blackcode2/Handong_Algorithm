@@ -3,7 +3,10 @@
 
 #include <iostream>
 #include <algorithm>
+#include <string>
 using namespace std;
+
+#define HEAPSIZE 30
 
 struct HeapNode
 {
@@ -15,14 +18,18 @@ struct HeapNode
 class Heap
 {
 private:
-    int maxCount;
-    int currentCount;
+    int maxCount = 0;
+    int currentCount = 0;
+    HeapNode *pData;
 
 public:
     Heap(int maxCount)
-        : maxCount{maxCount} {}
+        : maxCount{maxCount}
+    {
+        this->pData = new HeapNode[maxCount + 1];
+    }
 
-    void INSERT(HeapNode newNode, HeapNode *heap)
+    void insert(HeapNode newNode)
     {
         if (currentCount > maxCount)
         {
@@ -32,21 +39,21 @@ public:
         this->currentCount++;
         int index = this->currentCount;
 
-        while ((index != 1) && (newNode.score > heap[index / 2].score))
+        while ((index != 1) && (newNode.score > this->pData[index / 2].score))
         {
-            heap[index] = heap[index / 2];
-            index / 2;
+            this->pData[index] = this->pData[index / 2];
+            index /= 2;
         }
 
-        heap[index] = newNode;
+        this->pData[index] = newNode;
     }
 
-    HeapNode MAXIMUM(HeapNode *heap)
+    HeapNode maximum()
     {
-        return heap[0];
+        return pData[1];
     }
 
-    HeapNode EXTRACTMAX(HeapNode *heap)
+    HeapNode extracktMax(HeapNode *heap)
     {
         HeapNode *pReturnNode;
         HeapNode *pTempNode;
@@ -67,45 +74,15 @@ enum Menu
     w
 };
 Menu convertStringToMenu(string str);
-void getNewElement()
-{
-    HeapNode newNode;
-    int score;
-    cout << "Enter the name of the student: ";
-    cin >> newNode.name;
-
-    while (true)
-    {
-        cout << "Enter the score of the element: ";
-        cin >> score;
-        if (score < 0 || score > 100)
-        {
-            cout << "Number is out of the rannge 0 to 100\n";
-            continue;
-        }
-
-        /// TODO: 인풋으로 스트링값 들어왔을때 처리리
-        if (cin.fail())
-        {
-            cout << "Wrong Input! Please, put integer\n";
-            continue;
-        }
-
-        newNode.score = score;
-        break;
-    }
-    cout << "Enter the class name: ";
-}
-
-/// TODO: heap index 0 말고 1부터 시작이란다
+void getNewData(Heap *pq);
+void showMaxData(Heap *pq);
 
 int main()
 {
+    Heap prioritQueue{HEAPSIZE};
     Menu menu;
     string selectedMenu;
     bool isLooping = true;
-
-    HeapNode priorityQue[30];
 
     while (isLooping)
     {
@@ -116,14 +93,13 @@ int main()
         switch (menu)
         {
         case i:
-            cout << "i\n";
-            getNewElement();
+            getNewData(&prioritQueue);
             break;
         case d:
             cout << "d\n";
             break;
         case r:
-            cout << "r\n";
+            showMaxData(&prioritQueue);
             break;
         case n:
             cout << "n\n";
@@ -140,6 +116,7 @@ int main()
             break;
         }
     }
+
     return 0;
 }
 
@@ -207,4 +184,42 @@ Menu convertStringToMenu(string str)
     {
         return w;
     }
+}
+
+void getNewData(Heap *pq)
+{
+    HeapNode newNode;
+    int score;
+
+    cin.ignore();
+    cout << "Enter the name of the student: ";
+    getline(cin, newNode.name);
+
+    while (true)
+    {
+        cout << "Enter the score of the element: ";
+        cin >> score;
+        if (score < 0 || score > 100)
+        {
+            cout << "Number is out of the rannge 0 to 100\n";
+            continue;
+        }
+
+        /// TODO: 인풋으로 스트링값 들어왔을때 처리 for case2
+
+        newNode.score = score;
+        break;
+    }
+
+    cin.ignore();
+    cout << "Enter the class name: ";
+    getline(cin, newNode.className);
+
+    pq->insert(newNode);
+}
+
+void showMaxData(Heap *pq)
+{
+    HeapNode maxNode = pq->maximum();
+    cout << "Element with the largest key: [" << maxNode.name << ", " << maxNode.score << ", " << maxNode.className << "]\n";
 }
