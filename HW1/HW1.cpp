@@ -53,10 +53,19 @@ public:
         return pData[1];
     }
 
-    HeapNode extracktMax(HeapNode *heap)
+    HeapNode extracktMax()
     {
         HeapNode *pReturnNode;
         HeapNode *pTempNode;
+
+        if (this->currentCount <= 0 || this->pData == nullptr)
+        {
+            return;
+        }
+
+        pReturnNode = &(this->pData[1]);
+
+        pTempNode = &(this->pData[this->currentCount]);
     }
 };
 
@@ -191,7 +200,7 @@ void getNewData(Heap *pq)
     HeapNode newNode;
     int score;
 
-    cin.ignore();
+    cin.ignore(); // 버퍼에 남아있을 수 있는 개행문자 제거
     cout << "Enter the name of the student: ";
     getline(cin, newNode.name);
 
