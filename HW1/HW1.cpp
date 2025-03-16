@@ -6,7 +6,7 @@
 #include <string>
 using namespace std;
 
-#define HEAPSIZE 30
+#define MAXHEAPSIZE 30
 
 struct HeapNode
 {
@@ -29,9 +29,14 @@ public:
         this->pData = new HeapNode[maxCount + 1];
     }
 
+    int getCurrentCount()
+    {
+        return this->currentCount;
+    }
+
     void insert(HeapNode newNode)
     {
-        if (currentCount > maxCount)
+        if (currentCount >= maxCount)
         {
             cout << "Error: The heap reached its maximum size. Can not insert new data!\n";
         }
@@ -55,17 +60,55 @@ public:
 
     HeapNode extracktMax()
     {
-        HeapNode *pReturnNode;
-        HeapNode *pTempNode;
 
         if (this->currentCount <= 0 || this->pData == nullptr)
         {
-            return;
+            throw runtime_error("Cannot delete from an empty queue.!");
         }
 
-        pReturnNode = &(this->pData[1]);
+        HeapNode pReturnNode = this->pData[1];
 
-        pTempNode = &(this->pData[this->currentCount]);
+        HeapNode pTempNode = this->pData[this->currentCount];
+        this->currentCount--;
+
+        int parent = 1, child = 2;
+
+        while (child <= this->currentCount)
+        {
+
+            if (child < this->currentCount && this->pData[child].score < this->pData[child + 1].score)
+            {
+                child++;
+            }
+
+            if (pTempNode.score >= this->pData[child].score)
+            {
+                break;
+            }
+
+            this->pData[parent] = this->pData[child];
+            parent = child;
+            child *= 2;
+        }
+        this->pData[parent] = pTempNode;
+
+        return pReturnNode;
+    }
+
+    void printQueue()
+    {
+        if (this->currentCount <= 0)
+        {
+            cout << "The queue is empty!\n";
+            return;
+        }
+        cout << "Current queue elements:\n";
+        for (int i = 1; i <= this->currentCount; i++)
+        {
+            cout << i << "." << "[" << this->pData[i].name << ", " << this->pData[i].score << ", " << this->pData[i].className << "]\n";
+        }
+
+        cout << endl;
     }
 };
 
@@ -82,13 +125,15 @@ enum Menu
     q,
     w
 };
+
 Menu convertStringToMenu(string str);
 void getNewData(Heap *pq);
 void showMaxData(Heap *pq);
+void deleteData(Heap *pq);
 
 int main()
 {
-    Heap prioritQueue{HEAPSIZE};
+    Heap prioritQueue{MAXHEAPSIZE};
     Menu menu;
     string selectedMenu;
     bool isLooping = true;
@@ -105,7 +150,7 @@ int main()
             getNewData(&prioritQueue);
             break;
         case d:
-            cout << "d\n";
+            deleteData(&prioritQueue);
             break;
         case r:
             showMaxData(&prioritQueue);
@@ -114,14 +159,14 @@ int main()
             cout << "n\n";
             break;
         case p:
-            cout << "p\n";
+            prioritQueue.printQueue();
             break;
         case q:
-            cout << "q\n";
+            cout << "Program terminated.\n";
             isLooping = false;
             break;
         case w:
-            cout << "wrong input\n";
+            cout << "wrong input. Tyr again.\n";
             break;
         }
     }
@@ -131,6 +176,7 @@ int main()
 
 void showMenu()
 {
+    cout << "\n";
     cout << "*********** MENU ****************\n";
     cout << "I : Insert a new element into the queue\n";
     cout << "D : Delete the element with the largest key from the queue.\n";
@@ -138,6 +184,7 @@ void showMenu()
     cout << "N : Increase the key of an element in the queue\n";
     cout << "P : Print all elements in the queue\n";
     cout << "Q: Quit\n";
+    cout << endl;
 }
 
 string preprocessInput(string input)
@@ -156,6 +203,7 @@ string preprocessInput(string input)
 string getUserMenuInput()
 {
     string input;
+    cout << "Choose user menu: ";
     cin >> input;
 
     string processedInput = preprocessInput(input);
@@ -197,6 +245,13 @@ Menu convertStringToMenu(string str)
 
 void getNewData(Heap *pq)
 {
+
+    if (pq->getCurrentCount() == MAXHEAPSIZE)
+    {
+        cout << "The heap is full! You can not insert additional data.\n";
+        return;
+    }
+
     HeapNode newNode;
     int score;
 
@@ -225,10 +280,31 @@ void getNewData(Heap *pq)
     getline(cin, newNode.className);
 
     pq->insert(newNode);
+    cout << "New Element: [" << newNode.name << ", " << newNode.score << ", " << newNode.className << "] has been inserted.\n";
 }
 
 void showMaxData(Heap *pq)
 {
+    if (pq->getCurrentCount() <= 0)
+    {
+        cout << "The queue is empty!\n";
+        return;
+    }
     HeapNode maxNode = pq->maximum();
     cout << "Element with the largest key: [" << maxNode.name << ", " << maxNode.score << ", " << maxNode.className << "]\n";
+}
+
+void deleteData(Heap *pq)
+{
+    if (pq->getCurrentCount() <= 0)
+    {
+        cout << "Cannot delete from an empty queue.\n";
+        return;
+    }
+    HeapNode maxNode;
+    maxNode = pq->extracktMax();
+
+    cout << "Deleted element: [" << maxNode.name << ", " << maxNode.score << ", " << maxNode.className << "]\n";
+
+    cout << endl;
 }
