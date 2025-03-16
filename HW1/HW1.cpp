@@ -110,6 +110,64 @@ public:
 
         cout << endl;
     }
+
+    void increaseKey()
+    {
+
+        if (this->currentCount <= 0)
+        {
+            cout << "The queue is empty.\n";
+            return;
+        }
+
+        int selectedIndex;
+        int newScore;
+
+        while (true)
+        {
+
+            cin.ignore();
+            cout << "Enter the index of the Eelment: ";
+            cin >> selectedIndex;
+            if (selectedIndex <= 0 || selectedIndex > this->currentCount)
+            {
+                cout << "Wrong Index, Try again.\n";
+                continue;
+            }
+
+            break;
+        }
+
+        while (true)
+        {
+            cin.ignore();
+            cout << "Enter the new score: ";
+            cin >> newScore;
+
+            if (this->pData[selectedIndex].score > newScore)
+            {
+                cout << "New score should be larger than current score. Please enter again.\n";
+                continue;
+            }
+
+            break;
+        }
+
+        this->pData[selectedIndex].score = newScore;
+        HeapNode modifiedNode = this->pData[selectedIndex];
+
+        int index = selectedIndex;
+
+        while ((index != 1) && (newScore > this->pData[index / 2].score))
+        {
+            this->pData[index] = this->pData[index / 2];
+            index /= 2;
+        }
+
+        this->pData[index] = modifiedNode;
+
+        cout << "Key updated. [" << modifiedNode.name << ", " << modifiedNode.score << ", " << modifiedNode.className << "] has been repositioned in the queue.\n";
+    }
 };
 
 void showMenu();
@@ -156,7 +214,7 @@ int main()
             showMaxData(&prioritQueue);
             break;
         case n:
-            cout << "n\n";
+            prioritQueue.increaseKey();
             break;
         case p:
             prioritQueue.printQueue();
@@ -166,7 +224,7 @@ int main()
             isLooping = false;
             break;
         case w:
-            cout << "wrong input. Tyr again.\n";
+            cout << "Wrong input. Tyr again.\n";
             break;
         }
     }
@@ -193,7 +251,7 @@ string preprocessInput(string input)
 
     if (processedInput.length() > 1)
     {
-        return NULL;
+        return "w";
     }
     transform(processedInput.begin(), processedInput.end(), processedInput.begin(), ::tolower);
 
