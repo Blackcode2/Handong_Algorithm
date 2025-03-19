@@ -2,6 +2,7 @@
 // Blog: https://cplusplus.com/reference/set/set/
 // Stackoverflow: https://stackoverflow.com/questions/18728754/checking-cin-input-stream-produces-an-integer
 // Blog: https://dntworry-behappy.tistory.com/2
+// Book: 알고리즘과 그림으로 이해하고 C로 구현하는 자료구조 입문 by 이상진, chapter 10 히프
 
 #include <iostream>
 #include <algorithm>
